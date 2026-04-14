@@ -16,7 +16,7 @@ Necessito crear la part frontend per a una nova entitat Planificacio, seguint l�
 La primera proposta assumia una estructura de carpetes més profunda que la que finalment s’ha utilitzat al projecte.
 
 **Solució**  
-Es van adaptar manualment les rutes i imports perquè encaixessin amb la ubicació real dels fitxers dins de `features/planificacions/pages`.
+Es van adaptar manualment les rutes i imports perquè encaixessin amb la ubicació real dels fitxers dins de `features/planificacions/pages`. Aquest prompt ha sigut bàsicament per a que la IA tingui l'estructura del projecte i comparar la meva idea amb com el plantejava per donar-li indicacions futures.
 
 ---
 
