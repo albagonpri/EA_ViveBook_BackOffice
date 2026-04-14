@@ -1,0 +1,119 @@
+<div class="container">
+  <h2>Planificacions</h2>
+
+  <div class="form-section">
+    <input
+      type="text"
+      placeholder="Titol de la planificacio"
+      [ngModel]="form().title"
+      (ngModelChange)="form.set({ ...form(), title: $event })"
+    />
+
+    <select
+      [ngModel]="form().book"
+      (ngModelChange)="form.set({ ...form(), book: $event })"
+    >
+      <option value="">Selecciona un llibre</option>
+      @for (llibre of llibres(); track llibre._id) {
+        <option [value]="llibre._id">{{ llibre.title }}</option>
+      }
+    </select>
+
+    <div class="milestones-section">
+      <h3>Fites</h3>
+
+      @for (milestone of form().milestones; track $index) {
+        <div class="milestone-row">
+          <input
+            type="text"
+            placeholder="Descripcio de la fita"
+            [ngModel]="milestone.description"
+            (ngModelChange)="updateMilestoneDescription($index, $event)"
+          />
+
+          <select
+            [ngModel]="milestone.status"
+            (ngModelChange)="updateMilestoneStatus($index, $event)"
+          >
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+          </select>
+
+          <button type="button" (click)="removeMilestone($index)">Eliminar</button>
+        </div>
+      }
+
+      <button type="button" (click)="addMilestone()">Afegir fita</button>
+    </div>
+
+    <div class="progress-section">
+      <p>Progres: {{ formProgress() }}%</p>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="formProgress()"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" (click)="save()">
+        {{ isEditing() ? 'Actualizar' : 'Crear' }}
+      </button>
+      <button type="button" (click)="resetForm()">Netejar</button>
+    </div>
+  </div>
+
+  <div class="list-section">
+    <input
+      type="text"
+      placeholder="Buscar planificacions..."
+      [ngModel]="search()"
+      (ngModelChange)="onSearchChange($event)"
+    />
+
+    @if (loading()) {
+      <p>Carregant...</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Titol</th>
+            <th>Llibre</th>
+            <th>Fites</th>
+            <th>Progres</th>
+            <th>Accions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (planificacio of planificacions(); track planificacio._id) {
+            <tr>
+              <td>{{ planificacio.title }}</td>
+              <td>{{ typeof planificacio.book === 'string' ? planificacio.book : planificacio.book.title }}</td>
+              <td>
+                <ul>
+                  @for (milestone of planificacio.milestones; track $index) {
+                    <li>{{ milestone.description }} - {{ milestone.status }}</li>
+                  }
+                </ul>
+              </td>
+              <td>
+                <div>{{ getProgress(planificacio.milestones) }}%</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="getProgress(planificacio.milestones)"></div>
+                </div>
+              </td>
+              <td>
+                <button type="button" (click)="edit(planificacio)">Editar</button>
+                <button type="button" (click)="softDelete(planificacio._id!)">Eliminar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <button type="button" (click)="changePage(page() - 1)">Anterior</button>
+        <span>Pagina {{ page() }} de {{ totalPages() }}</span>
+        <button type="button" (click)="changePage(page() + 1)">Seguent</button>
+      </div>
+    }
+  </div>
+</div>

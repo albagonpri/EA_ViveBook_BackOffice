@@ -1,11 +1,6 @@
-import { Routes } from '@angular/router';
+import { Routes } from '@angular/router'
 
 export const routes: Routes = [
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'libros',
-  },
   {
     path: 'libros',
     loadComponent: () =>
@@ -31,7 +26,15 @@ export const routes: Routes = [
     title: 'BackOffice - Usuarios',
   },
   {
+    path: 'planificacions',
+    loadComponent: () =>
+      import('./features/planificacions/pages/planificacions-page.component').then(
+        (m) => m.PlanificacionsPageComponent
+      ),
+    title: 'BackOffice - Planificacions',
+  },
+  {
     path: '**',
     redirectTo: 'libros',
-  },
-];
+  }
+]

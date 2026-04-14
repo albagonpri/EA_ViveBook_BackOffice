@@ -26,7 +26,7 @@
       >
         Autores
       </a>
-      
+
       <a
         routerLink="/usuarios"
         routerLinkActive="active"
@@ -34,6 +34,15 @@
         class="topbar__link"
       >
         Usuarios
+      </a>
+
+      <a
+        routerLink="/planificacions"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="topbar__link"
+      >
+        Planificacions
       </a>
     </nav>
   </div>
