@@ -128,16 +128,47 @@ export class PlanificacionsPageComponent implements OnInit {
     const completed = milestones.filter((milestone) => milestone.status === 'completed').length
     return Math.round((completed / milestones.length) * 100)
   }
-save(): void {
-  const data = this.form()
 
-  if (!data.title.trim() || !data.book) {
-    alert('Has d omplir el titol i seleccionar un llibre')
-    return
+  edit(planificacio: Planificacio): void {
+    this.isEditing.set(true)
+    this.selectedId.set(planificacio._id ?? null)
+    this.form.set({
+      ...planificacio,
+      milestones: planificacio.milestones?.length
+        ? [...planificacio.milestones]
+        : [
+            { description: 'Revisar estat fisic del llibre', status: 'pending' },
+            { description: 'Fer foto de la portada', status: 'pending' },
+            { description: 'Fer foto de la contraportada', status: 'pending' }
+          ]
+    })
   }
 
-  if (this.isEditing() && this.selectedId()) {
-    this.planificacionsService.updatePlanificacio(this.selectedId()!, data).subscribe({
+  save(): void {
+    const data = this.form()
+
+    if (!data.title.trim() || !data.book) {
+      alert('Has d omplir el titol i seleccionar un llibre')
+      return
+    }
+
+    if (this.isEditing() && this.selectedId()) {
+      this.planificacionsService.updatePlanificacio(this.selectedId()!, data).subscribe({
+        next: () => {
+          this.resetForm()
+          this.search.set('')
+          this.page.set(1)
+          this.loadPlanificacions()
+        },
+        error: (error) => {
+          console.error(error)
+          alert('Error actualitzant la planificacio')
+        }
+      })
+      return
+    }
+
+    this.planificacionsService.createPlanificacio(data).subscribe({
       next: () => {
         this.resetForm()
         this.search.set('')
@@ -146,25 +177,10 @@ save(): void {
       },
       error: (error) => {
         console.error(error)
-        alert('Error actualitzant la planificacio')
+        alert('Error creant la planificacio')
       }
     })
-    return
   }
-
-  this.planificacionsService.createPlanificacio(data).subscribe({
-    next: () => {
-      this.resetForm()
-      this.search.set('')
-      this.page.set(1)
-      this.loadPlanificacions()
-    },
-    error: (error) => {
-      console.error(error)
-      alert('Error creant la planificacio')
-    }
-  })
-}
 
   softDelete(id: string): void {
     this.planificacionsService.deletePlanificacio(id).subscribe({
@@ -172,18 +188,18 @@ save(): void {
     })
   }
 
-resetForm(): void {
-  this.isEditing.set(false)
-  this.selectedId.set(null)
-  this.search.set('')
-  this.form.set({
-    title: '',
-    book: '',
-    milestones: [
-      { description: 'Revisar estat fisic del llibre', status: 'pending' },
-      { description: 'Fer foto de la portada', status: 'pending' },
-      { description: 'Fer foto de la contraportada', status: 'pending' }
-    ]
-  })
-}
+  resetForm(): void {
+    this.isEditing.set(false)
+    this.selectedId.set(null)
+    this.search.set('')
+    this.form.set({
+      title: '',
+      book: '',
+      milestones: [
+        { description: 'Revisar estat fisic del llibre', status: 'pending' },
+        { description: 'Fer foto de la portada', status: 'pending' },
+        { description: 'Fer foto de la contraportada', status: 'pending' }
+      ]
+    })
+  }
 }
